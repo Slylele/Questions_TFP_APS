@@ -16,7 +16,7 @@ selected_uv = st.selectbox("📚 Choisissez une UV :", uv_list)
 # Filtrer les questions pour l'UV sélectionnée
 uv_questions = df[df["UV"] == selected_uv]
 
-# Initialiser les réponses de l'utilisateur
+# Initialiser les états
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 if "user_answers" not in st.session_state:
@@ -38,8 +38,10 @@ for index, row in uv_questions.iterrows():
         "E": row["Proposition E"]
     }
 
+    correct_answer = row["Bonne Réponse"]
+
     if not st.session_state.submitted:
-        # Afficher les options avec boutons radio sans sélection par défaut
+        # Affichage normal avant soumission
         user_choice = st.radio(
             "Choisissez une réponse :",
             options=[""] + list(options.keys()),
@@ -48,10 +50,8 @@ for index, row in uv_questions.iterrows():
         )
         st.session_state.user_answers[question_key] = user_choice
     else:
+        # Affichage avec couleurs et icônes après soumission
         user_choice = st.session_state.user_answers.get(question_key, "")
-        correct_answer = row["Bonne Réponse"]
-
-        # Affichage des options avec couleurs et icônes
         for opt_key, opt_text in options.items():
             if user_choice == opt_key and opt_key == correct_answer:
                 st.markdown(f"<span style='color:green;'>✅ {opt_key} - {opt_text}</span>", unsafe_allow_html=True)
@@ -69,7 +69,8 @@ for index, row in uv_questions.iterrows():
 if not st.session_state.submitted:
     if st.button("✅ Soumettre mes réponses"):
         st.session_state.submitted = True
-        st.experimental_rerun()
+        # Pas de st.experimental_rerun() pour éviter l'erreur sur Streamlit Cloud
+        st.rerun()
 else:
     total_questions = len(uv_questions)
     score_out_of_10 = round((score / total_questions) * 10, 2)
