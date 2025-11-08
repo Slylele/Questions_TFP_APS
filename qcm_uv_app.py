@@ -19,12 +19,17 @@ uv_questions = df[df["UV"] == selected_uv]
 # Stocker les réponses de l'utilisateur
 user_answers = {}
 
+# Bouton de soumission
+submitted = st.button("✅ Soumettre mes réponses")
+
 # Affichage des questions
 st.header(f"📝 Questions pour {selected_uv}")
+score = 0
+
 for index, row in uv_questions.iterrows():
     question_key = f"Q{row['Numéro Question']}"
     st.subheader(f"Question {int(row['Numéro Question'])} : {row['Intitulé de la Question']}")
-    
+
     options = {
         "A": row["Proposition A"],
         "B": row["Proposition B"],
@@ -32,39 +37,37 @@ for index, row in uv_questions.iterrows():
         "D": row["Proposition D"],
         "E": row["Proposition E"]
     }
-    
-    # Afficher les options avec boutons radio
-    user_answers[question_key] = st.radio(
+
+    # Ajouter une option vide pour forcer l'utilisateur à choisir
+    user_choice = st.radio(
         "Choisissez une réponse :",
-        options=list(options.keys()),
-        format_func=lambda x: f"{x} - {options[x]}",
+        options=[""] + list(options.keys()),
+        format_func=lambda x: f"{x} - {options[x]}" if x in options else "Aucune sélection",
         key=question_key
     )
+    user_answers[question_key] = user_choice
 
-# Bouton de soumission
-if st.button("✅ Soumettre mes réponses"):
-    score = 0
-    st.header("📊 Résultats")
-    
-    for index, row in uv_questions.iterrows():
-        question_key = f"Q{row['Numéro Question']}"
+    # Affichage des résultats si soumis
+    if submitted:
         correct_answer = row["Bonne Réponse"]
-        user_answer = user_answers[question_key]
-        is_correct = user_answer == correct_answer
-        result_symbol = "✅" if is_correct else "❌"
-        result_color = "green" if is_correct else "red"
-        
-        st.markdown(
-            f"<span style='color:{result_color}; font-size:16px;'>{result_symbol} "
-            f"Question {int(row['Numéro Question'])} : Votre réponse : {user_answer} | "
-            f"Bonne réponse : {correct_answer}</span>",
-            unsafe_allow_html=True
-        )
-        
+        is_correct = user_choice == correct_answer
+
+        for opt_key, opt_text in options.items():
+            if user_choice == opt_key and is_correct:
+                st.markdown(f"<span style='color:green;'>✅ {opt_key} - {opt_text}</span>", unsafe_allow_html=True)
+            elif user_choice == opt_key and not is_correct:
+                st.markdown(f"<span style='color:red;'>❌ {opt_key} - {opt_text}</span>", unsafe_allow_html=True)
+            elif opt_key == correct_answer and not is_correct:
+                st.markdown(f"<span style='color:green;'>✅ {opt_key} - {opt_text}</span>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"{opt_key} - {opt_text}")
+
         if is_correct:
             score += 1
 
-    # Calcul de la note sur 10
+# Affichage de la note finale
+if submitted:
     total_questions = len(uv_questions)
     score_out_of_10 = round((score / total_questions) * 10, 2)
     st.subheader(f"🎯 Note finale : **{score_out_of_10} / 10**")
+            
