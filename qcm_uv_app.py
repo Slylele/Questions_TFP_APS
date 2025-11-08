@@ -16,9 +16,11 @@ selected_uv = st.selectbox("📚 Choisissez une UV :", uv_list)
 # Filtrer les questions pour l'UV sélectionnée
 uv_questions = df[df["UV"] == selected_uv]
 
-# Stocker les réponses de l'utilisateur
-user_answers = {}
-correct_answers = {}
+# Initialiser les réponses de l'utilisateur
+if "submitted" not in st.session_state:
+    st.session_state.submitted = False
+if "user_answers" not in st.session_state:
+    st.session_state.user_answers = {}
 
 # Affichage des questions
 st.header(f"📝 Questions pour {selected_uv}")
@@ -26,7 +28,7 @@ score = 0
 
 for index, row in uv_questions.iterrows():
     question_key = f"Q{row['Numéro Question']}"
-    st.subheader(f"Question {int(row['Numéro Question'])} : {row['Intitulé de la Question']}")
+    st.markdown(f"**Question {int(row['Numéro Question'])} :** {row['Intitulé de la Question']}")
 
     options = {
         "A": row["Proposition A"],
@@ -36,38 +38,20 @@ for index, row in uv_questions.iterrows():
         "E": row["Proposition E"]
     }
 
-    # Ajouter une option vide pour forcer l'utilisateur à choisir
-    user_choice = st.radio(
-        "Choisissez une réponse :",
-        options=[""] + list(options.keys()),
-        format_func=lambda x: f"{x} - {options[x]}" if x in options else "Aucune sélection",
-        key=question_key
-    )
+    if not st.session_state.submitted:
+        # Afficher les options avec boutons radio sans sélection par défaut
+        user_choice = st.radio(
+            "Choisissez une réponse :",
+            options=[""] + list(options.keys()),
+            format_func=lambda x: f"{x} - {options[x]}" if x in options else "Aucune sélection",
+            key=question_key
+        )
+        st.session_state.user_answers[question_key] = user_choice
+    else:
+        user_choice = st.session_state.user_answers.get(question_key, "")
+        correct_answer = row["Bonne Réponse"]
 
-    user_answers[question_key] = user_choice
-    correct_answers[question_key] = row["Bonne Réponse"]
-
-# Bouton de soumission en bas de page
-submitted = st.button("✅ Soumettre mes réponses")
-
-# Affichage des résultats directement dans les propositions
-if submitted:
-    st.header("📊 Résultats")
-    for index, row in uv_questions.iterrows():
-        question_key = f"Q{row['Numéro Question']}"
-        user_choice = user_answers[question_key]
-        correct_answer = correct_answers[question_key]
-
-        st.subheader(f"Question {int(row['Numéro Question'])} : {row['Intitulé de la Question']}")
-
-        options = {
-            "A": row["Proposition A"],
-            "B": row["Proposition B"],
-            "C": row["Proposition C"],
-            "D": row["Proposition D"],
-            "E": row["Proposition E"]
-        }
-
+        # Affichage des options avec couleurs et icônes
         for opt_key, opt_text in options.items():
             if user_choice == opt_key and opt_key == correct_answer:
                 st.markdown(f"<span style='color:green;'>✅ {opt_key} - {opt_text}</span>", unsafe_allow_html=True)
@@ -81,6 +65,12 @@ if submitted:
         if user_choice == correct_answer:
             score += 1
 
+# Bouton de soumission en bas de page
+if not st.session_state.submitted:
+    if st.button("✅ Soumettre mes réponses"):
+        st.session_state.submitted = True
+        st.experimental_rerun()
+else:
     total_questions = len(uv_questions)
     score_out_of_10 = round((score / total_questions) * 10, 2)
     st.subheader(f"🎯 Note finale : **{score_out_of_10} / 10**")
