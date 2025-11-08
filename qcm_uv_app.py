@@ -70,4 +70,4 @@ if submitted:
     total_questions = len(uv_questions)
     score_out_of_10 = round((score / total_questions) * 10, 2)
     st.subheader(f"🎯 Note finale : **{score_out_of_10} / 10**")
-            
+        
