@@ -92,17 +92,15 @@ if (st.session_state.last_file != file_choice) or (st.session_state.last_uv != s
     st.session_state.last_file = file_choice
     st.session_state.last_uv = selected_uv
     st.session_state.reset_flag = False
-    st.session_state.start_time = time.time()
+    st.session_state.start_time = time.time() # Démarre le chrono
 
-# Démarre le chrono
-if st.session_state.start_time is None and selected_uv:
-    st.session_state.start_time = time.time()
 
 # Bouton de réinitialisation
 if st.button("🔄 Réinitialiser le questionnaire"):
     st.session_state.submitted = False
     st.session_state.user_answers = {}
     st.session_state.reset_flag = True
+    st.session_state.start_time = time.time() # Démarre le chrono
     st.rerun()
 
 
@@ -212,6 +210,7 @@ else:
         st.session_state.user_answers = {}
         st.session_state.reset_flag = True
         st.session_state.scroll_to_top = True
+        st.session_state.start_time = time.time() # Démarre le chrono
         st.rerun()
 
 
