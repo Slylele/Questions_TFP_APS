@@ -172,7 +172,7 @@ else:
         st.markdown(f"<span style='color:red; font-size:24px;'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
     else:
         st.markdown(f"<span style='color:amber; font-size:24px;'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
-    st.markdown(f"<span style='color:grey; font-size:20px;'><b><i>           Score total : {score}/{total_questions}</i></b></span>", unsafe_allow_html=True)
+    st.markdown(f"<span style='margin-left:50px; color:grey; font-size:20px;'><b><i>Score total : {score}/{total_questions}</i></b></span>", unsafe_allow_html=True)
 
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser le questionnaire "):
