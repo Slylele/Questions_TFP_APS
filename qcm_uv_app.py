@@ -24,7 +24,6 @@ try:
     script_dir= script_dir1
 except:
     script_dir = script_dir2
-#excel_path = os.path.join(script_dir, "TFP_APS_Questions_QCU.xlsx")
 
 st.set_page_config(layout="wide")
 
@@ -32,7 +31,6 @@ st.set_page_config(layout="wide")
 st.title("📘 QCM TFP APS - Questions par UV", anchor="qcm_title")
 
 # Choix du fichier au lancement
-#st.title("📂 Liste des questions à utiliser")
 file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "Questions réelles 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
 
 # Définir le nom du fichier en fonction du choix
@@ -47,12 +45,6 @@ excel_path = os.path.join(script_dir, excel_name)
 #df = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
 df_questions = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
 df_uv = pd.read_excel(excel_path, sheet_name="Liste_UV", engine="openpyxl")
-
-# Liste des UV disponibles
-#uv_list = df_questions["UV"].unique()
-# Sélection de l'UV
-#selected_uv = st.selectbox("📚 Choisissez une UV :", uv_list)
-#uv_questions = df_questions[df_questions["UV"] == selected_uv].copy()
 
 # Liste des UV présentes dans les questions
 uv_in_questions = df_questions["UV"].unique()
@@ -100,12 +92,14 @@ if st.button("🔄 Réinitialiser le questionnaire"):
     st.session_state.reset_flag = True
     st.rerun()
 
+
+# =================================================================================
+# LISTE DES QUESTIONS AVEC PROPOSITIONS ET REPONSES
+# =================================================================================
 # Affichage des questions
 #uv_questions = df_questions.loc[st.session_state.question_order]
 uv_questions = uv_questions.loc[st.session_state.question_order]
 st.header(f"📝 Questions pour {selected_uv} ({nb_questions} questions)")
-score = 0
-
 
 st.markdown("""
 <style>
@@ -115,8 +109,9 @@ div[role='radiogroup'] label:first-child {
 </style>
 """, unsafe_allow_html=True)
 
-
+score = 0
 question_num = 0
+
 for index, row in uv_questions.iterrows():
     question_num = question_num+1
     st.markdown("---")
@@ -137,7 +132,7 @@ for index, row in uv_questions.iterrows():
             options=["Aucune sélection"] + list(options.keys()),
             format_func=lambda x: f"{x} - {options[x]}" if x in options else x,
             key=question_key,
-            label_visibility = "hidden",
+            label_visibility = "hidden"
         )
 
         st.session_state.user_answers[question_key] = user_choice
@@ -168,9 +163,8 @@ if not st.session_state.submitted:
         st.rerun()
 else:
     total_questions = len(uv_questions)
-    score_out_of_total = round((score / total_questions), 2)
-    #st.subheader(f"🎯 Note finale : **{score_out_of_10} / 10**")
-    st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_total}/10")
+    score_out_of_10 = round((score / total_questions) * 10, 2)
+    st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_10}/10")
 
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser le questionnaire "):
@@ -179,11 +173,13 @@ else:
         st.session_state.reset_flag = True
         st.session_state.scroll_to_top = True
         st.rerun()
-#document.querySelector('h1#qcm_title')?.scrollIntoView({behavior: 'smooth'});
 
+
+# =================================================================================
+# BAS DE PAGE
+# =================================================================================
 st.title("", anchor="bottom_page")
 st.markdown("----")
-
 
 if st.session_state.scroll_to_bottom:
     scroll_to_here(0, key='bottom')  # Scroll to the top of the page
