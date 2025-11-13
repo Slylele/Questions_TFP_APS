@@ -163,8 +163,8 @@ if not st.session_state.submitted:
         st.rerun()
 else:
     total_questions = len(uv_questions)
-    score_out_of_10 = round((score / total_questions) * 10, 2)
-    st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_10}/10")
+    score_out_of_20 = round((score / total_questions) * 20, 2)
+    st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_20}/20")
 
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser le questionnaire "):
