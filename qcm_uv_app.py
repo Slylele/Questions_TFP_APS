@@ -71,6 +71,7 @@ selected_uv = selected_uv_display.split(" - ")[0]
 
 # Filtrer les questions avec le vrai nom
 uv_questions = df_questions[df_questions["UV"] == selected_uv].copy()
+nb_questions = len(uv_questions)
 
 # Initialiser les états
 if "submitted" not in st.session_state:
@@ -102,7 +103,7 @@ if st.button("🔄 Réinitialiser le questionnaire"):
 # Affichage des questions
 #uv_questions = df_questions.loc[st.session_state.question_order]
 uv_questions = uv_questions.loc[st.session_state.question_order]
-st.header(f"📝 Questions pour {selected_uv}")
+st.header(f"📝 Questions pour {selected_uv} ({nb_questions} questions)")
 score = 0
 
 
@@ -115,19 +116,18 @@ div[role='radiogroup'] label:first-child {
 """, unsafe_allow_html=True)
 
 
-
+question_num = 0
 for index, row in uv_questions.iterrows():
+    question_num = question_num+1
     st.markdown("---")
     question_key = f"Q{row['Numéro Question']}"
-    st.markdown(f"**Question {int(row['Numéro Question'])} :** {row['Intitulé de la Question']}")
+    #st.markdown(f"**Question {int(row['Numéro Question'])} :** {row['Intitulé de la Question']}")
+    st.markdown(
+        f"**Question {question_num} :** {row['Intitulé de la Question']} "
+        f"<span style='color:grey'>(Q{row['Numéro Question']})</span>",
+        unsafe_allow_html=True
+    )
 
-    #options = {
-    #    "A": row["Proposition A"],
-    #    "B": row["Proposition B"],
-    #    "C": row["Proposition C"],
-    #    "D": row["Proposition D"],
-    #    "E": row["Proposition E"]
-    #}
     options = {k: row[f"Proposition {k}"] for k in ["A", "B", "C", "D", "E", "F"] if pd.notna(row[f"Proposition {k}"])}
     correct_answer = row["Bonne Réponse"]
 
