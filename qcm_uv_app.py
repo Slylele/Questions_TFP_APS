@@ -167,11 +167,11 @@ else:
     #st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_20}/20")
     st.subheader(f"🎯 Score : {score}/{total_questions}")
     if score_out_of_20 >= 12:
-        st.subheader(f"<span style='color:green'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:green'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
     elif score_out_of_20 < 8:
-        st.subheader(f"<span style='color:red'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:red'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
     else:
-        st.subheader(f"<span style='color:amber'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:amber'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
 
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser le questionnaire "):
