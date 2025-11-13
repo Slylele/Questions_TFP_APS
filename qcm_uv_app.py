@@ -33,32 +33,50 @@ st.title("📘 QCM TFP APS - Questions par UV", anchor="qcm_title")
 
 # Choix du fichier au lancement
 #st.title("📂 Liste des questions à utiliser")
-file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "Questions réelles 2025", "Questions trouvées sur le Net"], label_visibility="visible",)
+file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "Questions réelles 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
 
 # Définir le nom du fichier en fonction du choix
-if file_choice == "Questions réelles 2025":
-    excel_name = "TFP_APS_Questions_QCU_Reel_2025.xlsx"
+if file_choice == "Questions trouvées sur le Net":
+    excel_name = "TFP_APS_Questions_QCU_Internet.xlsx"
 else:
-    excel_name = "TFP_APS_Questions_QCU.xlsx"
+    excel_name = "TFP_APS_Questions_QCU_Reel_2025.xlsx"
 
 excel_path = os.path.join(script_dir, excel_name)
 
 # Charger le fichier Excel
-df = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
+#df = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
+df_questions = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
+df_uv = pd.read_excel(excel_path, sheet_name="Liste_UV", engine="openpyxl")
 
 # Liste des UV disponibles
-uv_list = df["UV"].unique()
-
+#uv_list = df_questions["UV"].unique()
 # Sélection de l'UV
-selected_uv = st.selectbox("📚 Choisissez une UV :", uv_list)
+#selected_uv = st.selectbox("📚 Choisissez une UV :", uv_list)
+#uv_questions = df_questions[df_questions["UV"] == selected_uv].copy()
+
+# Liste des UV présentes dans les questions
+uv_in_questions = df_questions["UV"].unique()
+
+# Filtrer Liste_UV pour ne garder que celles présentes dans les questions
+df_uv_filtered = df_uv[df_uv["UV"].isin(uv_in_questions)]
+
+# Construire la liste affichée : "UV - Description"
+uv_display_list = [f"{row['UV']} - {row['Description']}" for _, row in df_uv_filtered.iterrows()]
+
+# Sélecteur Streamlit
+selected_uv_display = st.selectbox("📚 Choisissez une UV :", uv_display_list)
+
+# Extraire le nom réel de l'UV (avant le tiret)
+selected_uv = selected_uv_display.split(" - ")[0]
+
+# Filtrer les questions avec le vrai nom
+uv_questions = df_questions[df_questions["UV"] == selected_uv].copy()
 
 # Initialiser les états
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 if "user_answers" not in st.session_state:
     st.session_state.user_answers = {}
-
-uv_questions = df[df["UV"] == selected_uv].copy()
 
 # Initialisation des clés
 if "last_file" not in st.session_state:
@@ -82,7 +100,7 @@ if st.button("🔄 Réinitialiser le questionnaire"):
     st.rerun()
 
 # Affichage des questions
-#uv_questions = df.loc[st.session_state.question_order]
+#uv_questions = df_questions.loc[st.session_state.question_order]
 uv_questions = uv_questions.loc[st.session_state.question_order]
 st.header(f"📝 Questions pour {selected_uv}")
 score = 0
