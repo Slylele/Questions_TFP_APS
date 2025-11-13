@@ -39,7 +39,7 @@ st.set_page_config(layout="wide")
 st.title("📘 QCM TFP APS - Questions par UV", anchor="qcm_title")
 
 # Choix du fichier au lancement
-file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "Questions réelles 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
+file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "QCU Cours 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
 
 # Définir le nom du fichier en fonction du choix
 if file_choice == "Questions trouvées sur le Net":
