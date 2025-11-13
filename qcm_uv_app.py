@@ -88,11 +88,14 @@ if "last_uv" not in st.session_state:
 # Si fichier ou UV a changé, réinitialiser l'ordre
 if (st.session_state.last_file != file_choice) or (st.session_state.last_uv != selected_uv) \
         or "question_order" not in st.session_state or st.session_state.get("reset_flag", False):
-    st.session_state.question_order = random.sample(list(uv_questions.index), len(uv_questions))
     st.session_state.last_file = file_choice
     st.session_state.last_uv = selected_uv
+    st.session_state.submitted = False
+    st.session_state.user_answers = {}
+    st.session_state.question_order = random.sample(list(uv_questions.index), len(uv_questions))
     st.session_state.reset_flag = False
-    st.session_state.start_time = time.time() # Démarre le chrono
+    st.session_state.start_time = time.time()   # Redémarre le chrono
+    st.session_state.end_time = None
 
 
 # Bouton de réinitialisation
@@ -192,10 +195,12 @@ else:
 
     # Calcul du temps passé
     elapsed = st.session_state.end_time - st.session_state.start_time
-    hours = int(elapsed // 3600)
-    minutes = int((elapsed % 3600) // 60)
+    #hours = int(elapsed // 3600)
+    #minutes = int((elapsed % 3600) // 60)
+    minutes = int(elapsed // 60)    # prévoit de dépasser 60 min)
     seconds = int(elapsed % 60)
-    time_total = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    #time_total = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    time_total = f"{minutes:02d}:{seconds:02d}"
 
     avg_per_question = elapsed / total_questions
     avg_minutes = int(avg_per_question // 60)
