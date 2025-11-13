@@ -92,6 +92,7 @@ if (st.session_state.last_file != file_choice) or (st.session_state.last_uv != s
     st.session_state.last_file = file_choice
     st.session_state.last_uv = selected_uv
     st.session_state.reset_flag = False
+    st.session_state.start_time = time.time()
 
 # Démarre le chrono
 if st.session_state.start_time is None and selected_uv:
