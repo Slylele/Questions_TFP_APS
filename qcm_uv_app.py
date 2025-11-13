@@ -11,10 +11,18 @@ if 'scroll_to_top' not in st.session_state:
 if 'scroll_to_bottom' not in st.session_state:
     st.session_state.scroll_to_bottom = False
 
+if "start_time" not in st.session_state:
+    st.session_state.start_time = None
+if "end_time" not in st.session_state:
+    st.session_state.end_time = None
+
 if st.session_state.scroll_to_top:
     scroll_to_here(0, key='top')  # Scroll to the top of the page
     st.session_state.scroll_to_top = False  # Reset the state after scrolling
 
+# Démarre le chrono
+if st.session_state.start_time is None:
+    st.session_state.start_time = time.time()
 
 # Charger le fichier Excel
 script_dir1 = os.path.dirname(__file__)
@@ -84,6 +92,10 @@ if (st.session_state.last_file != file_choice) or (st.session_state.last_uv != s
     st.session_state.last_file = file_choice
     st.session_state.last_uv = selected_uv
     st.session_state.reset_flag = False
+
+# Démarre le chrono
+if st.session_state.start_time is None and selected_uv:
+    st.session_state.start_time = time.time()
 
 # Bouton de réinitialisation
 if st.button("🔄 Réinitialiser le questionnaire"):
@@ -159,6 +171,7 @@ for index, row in uv_questions.iterrows():
 if not st.session_state.submitted:
     if st.button("✅ Soumettre mes réponses"):
         st.session_state.submitted = True
+        st.session_state.end_time = time.time() # Fin du Chrono
         st.session_state.scroll_to_bottom = True
         st.rerun()
 else:
@@ -167,12 +180,30 @@ else:
     #st.subheader(f"🎯 Score : {score}/{total_questions} — Note : {score_out_of_20}/20")
     st.markdown("---")
     if score_out_of_20 >= 12:
-        st.markdown(f"<span style='color:green; font-size:24px;'>🎯 Score : {score_out_of_20}/20</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:green; font-size:24px;'>🎯 Score : {score_out_of_20}/20</span>",
+                    unsafe_allow_html=True)
     elif score_out_of_20 < 8:
-        st.markdown(f"<span style='color:red; font-size:24px;'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:red; font-size:24px;'>🎯 Score : {score_out_of_20}/20</span>", unsafe_allow_html=True)
     else:
-        st.markdown(f"<span style='color:amber; font-size:24px;'>🎯 : {score_out_of_20}/20</span>", unsafe_allow_html=True)
-    st.markdown(f"<span style='margin-left:50px; color:grey; font-size:20px;'><b><i>Score total : {score}/{total_questions}</i></b></span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:amber; font-size:24px;'>🎯 Score : {score_out_of_20}/20</span>",
+                    unsafe_allow_html=True)
+    st.markdown(
+        f"<span style='margin-left:50px; color:grey; font-size:20px;'><b><i>Score total : {score}/{total_questions}</i></b></span>",
+        unsafe_allow_html=True)
+
+    # Calcul du temps passé
+    elapsed = st.session_state.end_time - st.session_state.start_time
+    hours = int(elapsed // 3600)
+    minutes = int((elapsed % 3600) // 60)
+    seconds = int(elapsed % 60)
+    time_total = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+    avg_per_question = elapsed / total_questions
+    avg_minutes = int(avg_per_question // 60)
+    avg_seconds = int(avg_per_question % 60)
+    time_avg = f"{avg_minutes:02d}:{avg_seconds:02d}"
+
+    st.markdown(f"<span style='color:grey;'>⏱ Temps total : {time_total} / Temps moyen par question : {time_avg}</span>", unsafe_allow_html=True)
 
     # Bouton de réinitialisation
     if st.button("🔄 Réinitialiser le questionnaire "):
