@@ -27,6 +27,7 @@ except:
 #excel_path = os.path.join(script_dir, "TFP_APS_Questions_QCU.xlsx")
 
 st.set_page_config(layout="wide")
+
 # Titre de l'application
 st.title("📘 QCM TFP APS - Questions par UV", anchor="qcm_title")
 
@@ -56,10 +57,23 @@ if "submitted" not in st.session_state:
     st.session_state.submitted = False
 if "user_answers" not in st.session_state:
     st.session_state.user_answers = {}
-if "question_order" not in st.session_state or st.session_state.get("reset_flag", False):
-    uv_questions = df[df["UV"] == selected_uv].copy()
+
+uv_questions = df[df["UV"] == selected_uv].copy()
+
+# Initialisation des clés
+if "last_file" not in st.session_state:
+    st.session_state.last_file = file_choice
+if "last_uv" not in st.session_state:
+    st.session_state.last_uv = selected_uv
+
+# Si fichier ou UV a changé, réinitialiser l'ordre
+if (st.session_state.last_file != file_choice) or (st.session_state.last_uv != selected_uv) \
+        or "question_order" not in st.session_state or st.session_state.get("reset_flag", False):
     st.session_state.question_order = random.sample(list(uv_questions.index), len(uv_questions))
+    st.session_state.last_file = file_choice
+    st.session_state.last_uv = selected_uv
     st.session_state.reset_flag = False
+
 # Bouton de réinitialisation
 if st.button("🔄 Réinitialiser le questionnaire"):
     st.session_state.submitted = False
@@ -68,7 +82,8 @@ if st.button("🔄 Réinitialiser le questionnaire"):
     st.rerun()
 
 # Affichage des questions
-uv_questions = df.loc[st.session_state.question_order]
+#uv_questions = df.loc[st.session_state.question_order]
+uv_questions = uv_questions.loc[st.session_state.question_order]
 st.header(f"📝 Questions pour {selected_uv}")
 score = 0
 
