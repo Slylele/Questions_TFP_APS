@@ -36,7 +36,7 @@ except:
 st.set_page_config(layout="wide")
 
 # Titre de l'application
-st.title("📘 QCU TFP APS - Questions par UV", anchor="qcm_title")
+st.title("📘 TFP APS - QCU par UV", anchor="qcm_title")
 
 # Choix du fichier au lancement
 file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "QCU Cours 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
