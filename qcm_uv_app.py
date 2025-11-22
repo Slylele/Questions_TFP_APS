@@ -157,16 +157,16 @@ for index, row in uv_questions.iterrows():
         user_choice = st.session_state.user_answers.get(question_key, "")
         # ✅ Affichage des réponses
         if user_choice == "Aucune sélection":
-            st.markdown(f"<p style='color:red; margin:0; padding:0; line-height:125%;'>❌ Aucune sélection</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:red; margin:0; padding:0; padding-left:25px; text-indent:-25px; line-height:125%;'>❌ Aucune sélection</p>", unsafe_allow_html=True)
         for opt_key, opt_text in options.items():
             if user_choice == opt_key and opt_key == correct_answer:
-                st.markdown(f"<p style='margin:0; padding:0; line-height:125%;'>✅ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='margin:0; padding:0; padding-left:45px; text-indent:-45px; line-height:125%;'>✅ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
             elif user_choice == opt_key and opt_key != correct_answer:
-                st.markdown(f"<p style='color:#8B0000; margin:0; padding:0; line-height:125%;'>❌ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='color:#8B0000; margin:0; padding:0; padding-left:45px; text-indent:-45px; line-height:125%;'>❌ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
             elif opt_key == correct_answer and user_choice != correct_answer:
-                st.markdown(f"<p style='margin:0; padding:0; line-height:125%;'>✅ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='margin:0; padding:0; padding-left:45px; text-indent:-45px; line-height:125%;'>✅ {opt_key} - {opt_text}</p>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<p style='margin:0; margin-left:25px; padding:0; line-height:125%;'>{opt_key} - {opt_text}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='margin:0; padding:0; margin-left:25px; padding-left:20px; text-indent:-20px; line-height:125%;'>{opt_key} - {opt_text}</p>", unsafe_allow_html=True)
 
         if user_choice == correct_answer:
             score += 1
