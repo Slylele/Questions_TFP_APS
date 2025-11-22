@@ -132,8 +132,10 @@ for index, row in uv_questions.iterrows():
     question_key = f"Q{row['Numéro Question']}"
     #st.markdown(f"**Question {int(row['Numéro Question'])} :** {row['Intitulé de la Question']}")
     st.markdown(
-        f"**Question {question_num} :** {row['Intitulé de la Question']} "
-        f"<span style='color:grey'>(Q{row['Numéro Question']})</span>",
+        f"<p margin:0; padding:0; line-height:140%;'>"
+        f"<span style='font-weight:bold;'>Question {question_num}</span>"
+        f" : {row['Intitulé de la Question']} "
+        f"<span style='color:grey;'>(Q{row['Numéro Question']})</span></p>",
         unsafe_allow_html=True
     )
 
@@ -146,7 +148,7 @@ for index, row in uv_questions.iterrows():
             options=["Aucune sélection"] + list(options.keys()),
             format_func=lambda x: f"{x} - {options[x]}" if x in options else x,
             key=question_key,
-            label_visibility = "hidden"
+            label_visibility = "collapsed"
         )
 
         st.session_state.user_answers[question_key] = user_choice
