@@ -233,7 +233,7 @@ if st.session_state.scroll_to_bottom:
 
 # As a text link
 #st.markdown('[Back to Top](#qcm_title)')
-#st.markdown("<a href='#qcm_title'>Go to top</a>", unsafe_allow_html=True);
+st.markdown("<a href='#qcm_title'>Go to top</a>", unsafe_allow_html=True);
 # As an html button (needs styling added)
 #st.markdown(''' <a target="_self" href="#qcm_title">
 #                    <button>
