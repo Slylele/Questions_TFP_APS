@@ -38,21 +38,23 @@ st.set_page_config(layout="wide")
 # Titre de l'application
 st.title("📘 TFP APS - QCU par UV", anchor="qcm_title")
 
-# Choix du fichier au lancement
-file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "QCU Cours 2025", "Questions trouvées sur le Net"], index=1, label_visibility="visible",)
-
-# Définir le nom du fichier en fonction du choix
-if file_choice == "Questions trouvées sur le Net":
-    excel_name = "TFP_APS_Questions_QCU_Internet.xlsx"
-else:
-    excel_name = "TFP_APS_Questions_QCU_Reel_2025.xlsx"
-
+excel_name = "TFP_APS_Questions_QCU_Reel_2025.xlsx"
 excel_path = os.path.join(script_dir, excel_name)
 
+# Choix du fichier au lancement
+file_choice = st.radio("📂 Sélectionnez les questions à utiliser :", ["", "QCU par UV", "QCU vrac examen blanc"], index=1, label_visibility="visible",)
 # Charger le fichier Excel
-#df = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
-df_questions = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
-df_uv = pd.read_excel(excel_path, sheet_name="Liste_UV", engine="openpyxl")
+#df_questions = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
+#df_uv = pd.read_excel(excel_path, sheet_name="Liste_UV", engine="openpyxl")
+# Définir le nom du fichier en fonction du choix
+df_questions_all = pd.read_excel(excel_path, sheet_name="Liste_Questions", engine="openpyxl")
+df_uv_all = pd.read_excel(excel_path, sheet_name="Liste_UV", engine="openpyxl")
+if file_choice == "QCU par UV":
+    df_questions = df_questions_all[df_questions_all['UV'].astype(str).str.startswith('UV')]
+    df_uv = df_uv_all[df_uv_all['UV'].astype(str).str.startswith('UV')]
+else:
+    df_questions = df_questions_all[df_questions_all['UV'].astype(str).str.startswith('VRAC')]
+    df_uv = df_uv_all[df_uv_all['UV'].astype(str).str.startswith('VRAC')]
 
 # Liste des UV présentes dans les questions
 uv_in_questions = df_questions["UV"].unique()
@@ -135,7 +137,8 @@ for index, row in uv_questions.iterrows():
         f"<p margin:0; padding:0; line-height:140%;'>"
         f"<span style='font-weight:bold;'>Question {question_num}</span>"
         f" : {row['Intitulé de la Question']} "
-        f"<span style='color:grey;'>(Q{row['Numéro Question']})</span></p>",
+        #f"<span style='color:grey;'>(Q{row['Numéro Question']})</span>"    # à ajouter dans le markdown ci-dessous si on veut voir le num de question réelle en gris
+        f"</p>",
         unsafe_allow_html=True
     )
 
@@ -233,7 +236,7 @@ if st.session_state.scroll_to_bottom:
 
 # As a text link
 #st.markdown('[Back to Top](#qcm_title)')
-st.markdown("<a href='#qcm_title'>Haut de page</a>", unsafe_allow_html=True);
+#st.markdown("<a href='#qcm_title'>Go to top</a>", unsafe_allow_html=True);
 # As an html button (needs styling added)
 #st.markdown(''' <a target="_self" href="#qcm_title">
 #                    <button>
